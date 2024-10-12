@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Список студентов</title>
+</head>
+<body>
+<h1>Список студентов</h1>
+
+<a th:href="@{/students/add}">Добавить студента</a>
+
+<h2>Фильтрация студентов:</h2>
+<form th:action="@{/students}" method="get">
+  <input type="text" name="name" placeholder="Имя" th:value="${name}" />
+  <input type="text" name="lastName" placeholder="Фамилия" th:value="${lastName}" />
+  <input type="text" name="firstName" placeholder="Отчество" th:value="${firstName}" />
+  <button type="submit">Искать</button>
+</form>
+
+<h2>Все студенты:</h2>
+<form th:action="@{/students/delete-multiple}" method="post">
+  <ul>
+    <th:block th:each="student : ${students}">
+      <li>
+        <input type="checkbox" name="ids" th:value="${student.id}" />
+        <span th:text="${student.lastName} + ' ' + ${student.name} + ' ' + ${student.firstName} + ' ' + ${student.middleName}"></span>
+
+        <!-- Ссылки на редактирование и удаление -->
+        <a th:href="@{/students/edit/{id}(id=${student.id})}">Редактировать</a>
+        <form th:action="@{/students/soft-delete}" method="post" style="display:inline;">
+          <input type="hidden" name="id" th:value="${student.id}" />
+          <button type="submit">Логическое удаление</button>
+        </form>
+      </li>
+    </th:block>
+  </ul>
+  <button type="submit">Удалить выбранных студентов</button>
+</form>
+
+<div>
+  <span>Страница [[${currentPage + 1}]] из [[${totalPages}]]</span>
+  <div>
+    <a th:href="@{/students(page=${currentPage - 1}, name=${name}, lastName=${lastName}, firstName=${firstName})}" th:if="${currentPage > 0}">Предыдущая</a>
+    <a th:href="@{/students(page=${currentPage + 1}, name=${name}, lastName=${lastName}, firstName=${firstName})}" th:if="${currentPage + 1 < totalPages}">Следующая</a>
+  </div>
+</div>
+</body>
+</html>
